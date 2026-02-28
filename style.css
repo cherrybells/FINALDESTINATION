@@ -417,10 +417,3 @@ video {
     overflow: visible;       /* make sure nothing is hidden */
 }
 
-/* Keep headings and objectives on a single line, shrink if needed */
-.boxes h1,
-.boxes .qo-grid {
-    font-size: clamp(16px, 3vw, 25px); /* shrink on smaller screens, max 25px */
-    white-space: nowrap;               /* force single line */
-    overflow: hidden;                  /* prevent spilling out */
-}

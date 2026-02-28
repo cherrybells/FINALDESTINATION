@@ -420,3 +420,27 @@ video {
         font-size: 90%;
     }
 }
+
+/* Ensure all box content stays inside the box */
+.boxes, .card, .Box, .Box-cont, .interestbox, .wrapper div, .subjects span, .grid > div {
+    overflow: hidden;          /* hide overflow */
+    word-wrap: break-word;     /* break long words if needed */
+    overflow-wrap: break-word; /* same, for compatibility */
+    white-space: normal;       /* allow wrapping to multiple lines */
+}
+
+/* Headings inside boxes also stay inside */
+.boxes h1 {
+    white-space: normal;       /* allow multiple lines */
+    overflow: hidden;          /* prevent spilling outside */
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    font-size: clamp(14px, 4vw, 25px); /* scales to fit box nicely */
+}
+
+/* Paragraphs inside boxes scale a bit on smaller screens */
+.boxes p, .card p {
+    font-size: clamp(12px, 2.5vw, 16px);
+    line-height: 1.2;
+    margin: 0;
+}

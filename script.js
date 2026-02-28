@@ -196,6 +196,7 @@ function createPipes(delta) {
     topPipe.className = 'pipe_sprite';
     topPipe.style.height = topHeight + 'px';
     topPipe.style.left = '100vw';
+    topPipe.style.top = '0px';  
     document.body.appendChild(topPipe);
 
     const bottomPipe = document.createElement('div');

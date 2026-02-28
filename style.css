@@ -386,17 +386,10 @@ video {
     }
 }
 
-/* Fit headings inside boxes */
+/* Make headings fit in one line without wrapping */
 .boxes h1 {
-    font-size: 25px;           /* desktop size */
-    line-height: 1.1;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    white-space: normal;
-}
-
-@media screen and (max-width: 600px) {
-    .boxes h1 {
-        font-size: 18px;       /* smaller on mobile */
-    }
+    font-size: clamp(16px, 2vw, 25px); /* automatically scales between 16px and 25px */
+    white-space: nowrap;                /* force single line */
+    overflow: hidden;                   /* hide overflow if still too long */
+    text-overflow: ellipsis;            /* optional: show ... if too long */
 }

@@ -386,14 +386,13 @@ video {
     }
 }
 
-/* About LCBA headings stay on one line and shrink if too long */
+/* About LCBA headings stay on one line and fit inside their boxes */
 .boxes h1 {
     display: inline-block;      /* allow width to adjust */
     max-width: 100%;            /* cannot exceed box width */
     font-size: 25px;            /* default desktop size */
     white-space: nowrap;        /* keep text on one line */
     overflow: hidden;           /* prevent spill */
-    text-overflow: ellipsis;    /* optional: show … if extreme */
 }
 
 /* Automatically shrink font on smaller screens */
@@ -402,4 +401,3 @@ video {
         font-size: 18px;        /* smaller font on mobile */
     }
 }
-

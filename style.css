@@ -386,10 +386,36 @@ video {
     }
 }
 
-/* Make headings fit in one line without wrapping */
+/* About LCBA headings stay on one line and shrink if too long */
 .boxes h1 {
-    font-size: clamp(16px, 2vw, 25px); /* automatically scales between 16px and 25px */
-    white-space: nowrap;                /* force single line */
-    overflow: hidden;                   /* hide overflow if still too long */
-    text-overflow: ellipsis;            /* optional: show ... if too long */
+    display: inline-block;      /* allow width to adjust */
+    max-width: 100%;            /* cannot exceed box width */
+    font-size: 25px;            /* default desktop size */
+    white-space: nowrap;        /* keep text on one line */
+    overflow: hidden;           /* prevent spill */
+    text-overflow: ellipsis;    /* optional: show … if extreme */
+}
+
+/* Automatically shrink font on smaller screens */
+@media screen and (max-width: 600px) {
+    .boxes h1 {
+        font-size: 18px;        /* smaller font on mobile */
+    }
+}
+
+/* About LCBA headings stay on one line and shrink if too long */
+.boxes h1 {
+    display: inline-block;      /* allow width to adjust */
+    max-width: 100%;            /* cannot exceed box width */
+    font-size: 25px;            /* default desktop size */
+    white-space: nowrap;        /* keep text on one line */
+    overflow: hidden;           /* prevent spill */
+    text-overflow: ellipsis;    /* optional: show … if extreme */
+}
+
+/* Automatically shrink font on smaller screens */
+@media screen and (max-width: 600px) {
+    .boxes h1 {
+        font-size: 18px;        /* smaller font on mobile */
+    }
 }

@@ -1,7 +1,12 @@
-let move_speed = 2;
-let gravity = 0.35;
-let initialGravity = 0.05; // slow start
-let gravityIncreaseRate = 0.01; // slower ramp for first posts
+/* ===============================
+   STUDENT FRIENDLY FLAPPY GAME
+   Balanced for Laptop / Tablet / Mobile
+================================= */
+
+let move_speed = 2;              // Slow horizontal movement
+let gravity = 0.35;              // Normal gravity
+let initialGravity = 0.05;       // Very slow start
+let gravityIncreaseRate = 0.005; // Very smooth ramp
 let maxGravity = 0.35;
 
 let bird = document.querySelector('.hironobird');
@@ -17,6 +22,9 @@ let gravityTimer = 0;
 img.style.display = 'none';
 message.classList.add('messageStyle');
 
+/* ===============================
+   START GAME
+================================= */
 function startGame() {
     if (game_state === 'Play') return;
 
@@ -25,8 +33,10 @@ function startGame() {
     gravityTimer = 0;
 
     document.querySelectorAll('.pipe_sprite').forEach(el => el.remove());
+
     bird.style.top = '40vh';
     img.style.display = 'block';
+
     score_val.innerHTML = '0';
     score_title.innerHTML = 'Score : ';
     message.innerHTML = '';
@@ -35,13 +45,18 @@ function startGame() {
     play();
 }
 
+/* ===============================
+   BALANCED JUMP
+================================= */
 function jump() {
     if (game_state === 'Play') {
-        bird_dy = -1.5; // reduced jump for easier control
+        bird_dy = -6;   // Balanced jump height
     }
 }
 
-/* Controls */
+/* ===============================
+   CONTROLS
+================================= */
 document.addEventListener('keydown', e => {
     if (e.key === 'Enter') startGame();
     if (e.key === 'ArrowUp') jump();
@@ -58,8 +73,14 @@ document.addEventListener('touchstart', e => {
     else jump();
 }, { passive: false });
 
+/* ===============================
+   MAIN GAME LOOP
+================================= */
 function play() {
-    let pipe_gap = window.innerWidth < 768 ? 35 : 30;
+
+    // Bigger gap for easier gameplay
+    let pipe_gap = window.innerWidth < 768 ? 42 : 36;
+
     let pipe_separation = 0;
 
     function move() {
@@ -68,25 +89,38 @@ function play() {
         let pipe_sprite = document.querySelectorAll('.pipe_sprite');
         let bird_props = bird.getBoundingClientRect();
 
-        /* Gravity gradually increases depending on score */
-        gravityTimer += 1/60; // assuming ~60fps
-        // Increase gravity slowly until max, but faster after 10 points
-        let effectiveGravity = initialGravity + gravityIncreaseRate * gravityTimer;
-        if (parseInt(score_val.innerHTML) > 10) effectiveGravity = gravity; // normal gravity after 10 points
-        if (effectiveGravity > maxGravity) effectiveGravity = maxGravity;
+        /* -------- Gravity System -------- */
+        gravityTimer += 1 / 60;
+
+        let effectiveGravity =
+            initialGravity + gravityIncreaseRate * gravityTimer;
+
+        if (parseInt(score_val.innerHTML) > 15)
+            effectiveGravity = gravity;
+
+        if (effectiveGravity > maxGravity)
+            effectiveGravity = maxGravity;
+
         bird_dy += effectiveGravity;
 
         bird.style.top = bird_props.top + bird_dy + 'px';
 
-        if (bird_props.top <= 0 || bird_props.bottom >= window.innerHeight) {
+        /* -------- Ceiling & Ground -------- */
+        if (
+            bird_props.top <= 0 ||
+            bird_props.bottom >= window.innerHeight
+        ) {
             endGame();
             return;
         }
 
+        /* -------- Pipe Movement & Collision -------- */
         pipe_sprite.forEach(element => {
             let pipe_props = element.getBoundingClientRect();
 
-            if (pipe_props.right <= 0) element.remove();
+            if (pipe_props.right <= 0) {
+                element.remove();
+            }
 
             else if (
                 bird_props.left < pipe_props.left + pipe_props.width &&
@@ -98,23 +132,36 @@ function play() {
                 return;
             }
 
-            else if (pipe_props.right < bird_props.left && element.increase_score === '1') {
-                score_val.innerHTML = parseInt(score_val.innerHTML) + 1;
+            else if (
+                pipe_props.right < bird_props.left &&
+                element.increase_score === '1'
+            ) {
+                score_val.innerHTML =
+                    parseInt(score_val.innerHTML) + 1;
+
                 element.increase_score = '0';
             }
 
-            element.style.left = pipe_props.left - move_speed + 'px';
+            element.style.left =
+                pipe_props.left - move_speed + 'px';
         });
 
         requestAnimationFrame(move);
     }
 
+    /* ===============================
+       PIPE CREATION
+    ================================= */
     function create_pipe() {
         if (game_state !== 'Play') return;
 
-        if (pipe_separation > 100) {
+        // FARTHER PIPE DISTANCE (easier)
+        if (pipe_separation > 170) {
             pipe_separation = 0;
-            let pipe_pos = Math.floor(Math.random() * 40) + 10;
+
+            // More controlled pipe height
+            let pipe_pos =
+                Math.floor(Math.random() * 30) + 20;
 
             let pipe_top = document.createElement('div');
             pipe_top.className = 'pipe_sprite';
@@ -123,7 +170,8 @@ function play() {
 
             let pipe_bottom = document.createElement('div');
             pipe_bottom.className = 'pipe_sprite';
-            pipe_bottom.style.top = pipe_pos + pipe_gap + 'vh';
+            pipe_bottom.style.top =
+                pipe_pos + pipe_gap + 'vh';
             pipe_bottom.increase_score = '1';
             document.body.appendChild(pipe_bottom);
         }
@@ -136,9 +184,15 @@ function play() {
     requestAnimationFrame(create_pipe);
 }
 
+/* ===============================
+   END GAME
+================================= */
 function endGame() {
     game_state = 'End';
     img.style.display = 'none';
-    message.innerHTML = '<span style="color:red;">Game Over</span><br>Tap / Click / Press Enter to Restart';
+
+    message.innerHTML =
+        '<span style="color:red;">Game Over</span><br>Press Enter / Click / Tap to Restart';
+
     message.classList.add('messageStyle');
 }

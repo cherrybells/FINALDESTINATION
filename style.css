@@ -403,27 +403,16 @@ video {
     }
 }
 
-/* About LCBA headings stay on one line and shrink if too long */
-.boxes h1 {
-    display: inline-block;      /* allow width to adjust */
-    max-width: 100%;            /* cannot exceed box width */
-    font-size: 25px;            /* default desktop size */
-    white-space: nowrap;        /* keep text on one line */
-    overflow: hidden;           /* prevent spill */
-    text-overflow: ellipsis;    /* optional: show … if extreme */
+/* Ensure text stays fully inside its box */
+.boxes {
+    width: 100%;             /* make box use full available space */
+    padding: 10px 15px;      /* slightly reduce padding to give more room */
+    box-sizing: border-box;  /* include padding in width */
 }
 
-/* Automatically shrink font on smaller screens */
-@media screen and (max-width: 600px) {
-    .boxes h1 {
-        font-size: 18px;        /* smaller font on mobile */
-    }
-}
-
-/* About LCBA headings fit in box naturally without shrinking */
 .boxes h1 {
-    font-size: 25px;             /* keep the font size as it is */
-    white-space: normal;         /* allow line breaks if needed */
-    word-wrap: break-word;       /* break long words to fit */
-    overflow-wrap: break-word;   /* safe fallback for browsers */
+    font-size: 25px;         /* keep original font size */
+    white-space: normal;     /* allow wrapping */
+    word-break: break-word;  /* break long words if needed */
+    overflow: visible;       /* make sure nothing is hidden */
 }

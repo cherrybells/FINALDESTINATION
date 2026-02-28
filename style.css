@@ -392,12 +392,12 @@ video {
     max-width: 100%;            /* cannot exceed box width */
     font-size: 25px;            /* default desktop size */
     white-space: nowrap;        /* keep text on one line */
-    overflow: hidden;           /* prevent spill */
+    overflow: hidden;           /* prevent spill outside box */
 }
 
 /* Automatically shrink font on smaller screens */
 @media screen and (max-width: 600px) {
     .boxes h1 {
-        font-size: 18px;        /* smaller font on mobile */
+        font-size: 18px;        /* smaller font on mobile to fit */
     }
 }

@@ -385,56 +385,21 @@ video {
     }
 }
 
-/* Ensure headings fit inside their boxes, no overflow, no ellipsis */
-.boxes h1 {
-    display: inline-block;
-    max-width: 100%;
-    white-space: nowrap;   /* keep on one line */
-    overflow: hidden;      /* hide overflow */
-    font-size: 25px;       /* default desktop size */
-}
-
-/* Automatically shrink headings on smaller screens */
-@media screen and (max-width: 600px) {
-    .boxes h1 {
-        font-size: 18px;   /* smaller font on mobile to fit */
-    }
-}
-
-/* Make general text fit inside boxes and cards */
-.card, .boxes, .Box, .Box-cont, .interestbox, .wrapper div, .subjects span, .grid > div {
-    overflow: hidden;         /* hide overflow */
-    white-space: normal;      /* allow wrapping if needed */
-    word-wrap: break-word;    /* break long words */
-    overflow-wrap: break-word;
-}
-
-/* Responsive font for smaller screens */
-@media screen and (max-width: 600px) {
-    .card p, .boxes p, .interest-content, .subjects span, .grid > div p {
-        font-size: 0.85em;
-        line-height: 1.2;
-    }
-    h1, h2, h3 {
-        font-size: 90%;
-    }
-}
-
 /* Ensure all box content stays inside the box */
 .boxes, .card, .Box, .Box-cont, .interestbox, .wrapper div, .subjects span, .grid > div {
-    overflow: hidden;          /* hide overflow */
+    overflow: hidden;          /* hide overflow outside box */
     word-wrap: break-word;     /* break long words if needed */
-    overflow-wrap: break-word; /* same, for compatibility */
+    overflow-wrap: break-word; /* compatibility */
     white-space: normal;       /* allow wrapping to multiple lines */
 }
 
-/* Headings inside boxes also stay inside */
+/* Headings inside boxes also stay inside and scale */
 .boxes h1 {
     white-space: normal;       /* allow multiple lines */
     overflow: hidden;          /* prevent spilling outside */
     word-wrap: break-word;
     overflow-wrap: break-word;
-    font-size: clamp(14px, 4vw, 25px); /* scales to fit box nicely */
+    font-size: clamp(14px, 4vw, 25px); /* scales nicely for screen */
 }
 
 /* Paragraphs inside boxes scale a bit on smaller screens */
@@ -442,4 +407,10 @@ video {
     font-size: clamp(12px, 2.5vw, 16px);
     line-height: 1.2;
     margin: 0;
+}
+
+/* For subjects span (like Philosophy, Institutions) */
+.subjects span {
+    white-space: normal;        /* allow wrapping to multiple lines */
+    font-size: clamp(12px, 3vw, 14px); /* scale for mobile */
 }

@@ -419,3 +419,11 @@ video {
         font-size: 18px;        /* smaller font on mobile */
     }
 }
+
+/* About LCBA headings fit in box naturally without shrinking */
+.boxes h1 {
+    font-size: 25px;             /* keep the font size as it is */
+    white-space: normal;         /* allow line breaks if needed */
+    word-wrap: break-word;       /* break long words to fit */
+    overflow-wrap: break-word;   /* safe fallback for browsers */
+}

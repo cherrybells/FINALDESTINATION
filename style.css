@@ -369,7 +369,6 @@ video {
 /* Make text fit inside fixed-size boxes */
 .card, .boxes, .Box, .Box-cont, .interestbox, .wrapper div, .subjects span, .grid > div {
     overflow: hidden;            /* hide overflow */
-    text-overflow: ellipsis;     /* optional: show "…" if text too long */
     white-space: normal;         /* allow wrapping */
     word-wrap: break-word;       /* break long words */
     overflow-wrap: break-word;   /* break long words */

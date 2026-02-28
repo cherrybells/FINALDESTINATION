@@ -1,4 +1,4 @@
-let move_speed = 1.5;
+let move_speed = 2;
 let gravity = 0.35;
 let initialGravity = 0.05; // slow start
 let gravityIncreaseRate = 0.01; // slower ramp for first posts
@@ -37,7 +37,7 @@ function startGame() {
 
 function jump() {
     if (game_state === 'Play') {
-        bird_dy = 1.0; // reduced jump for easier control
+        bird_dy = -1.5; // reduced jump for easier control
     }
 }
 

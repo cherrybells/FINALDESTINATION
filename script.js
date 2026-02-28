@@ -1,19 +1,30 @@
 /* ==========================================
-   CLASSROOM FLAPPY GAME – BALANCED VERSION
+   CLASSROOM FLAPPY GAME – FINAL STABLE BUILD
 ========================================== */
 
-let move_speed = 2;               // Slower pipes (easier on laptop)
-let gravity = 0.35;               // Normal gravity cap
-let initialGravity = 0.05;        // Very slow start
-let gravityIncreaseRate = 0.004;  // Smooth increase
+/* ===== GAME PHYSICS ===== */
+let move_speed = 2;        
+let gravity = 0.35;        
+let initialGravity = 0.05; 
+let gravityIncreaseRate = 0.004;
 let maxGravity = 0.35;
 
+/* Jump strength tuned to gravity */
+let jumpStrength = 5;
+
+/* Pipe distance control */
+let pipeDistance = 380;   // VERY far apart
+let pipeGapMobile = 50;
+let pipeGapDesktop = 44;
+
+/* ===== ELEMENTS ===== */
 let bird = document.querySelector('.hironobird');
 let img = document.getElementById('bird');
 let score_val = document.querySelector('.score_val');
 let message = document.querySelector('.message');
 let score_title = document.querySelector('.score_title');
 
+/* ===== GAME STATE ===== */
 let game_state = 'Start';
 let bird_dy = 0;
 let gravityTimer = 0;
@@ -31,7 +42,8 @@ function startGame() {
     bird_dy = 0;
     gravityTimer = 0;
 
-    document.querySelectorAll('.pipe_sprite').forEach(el => el.remove());
+    document.querySelectorAll('.pipe_sprite')
+        .forEach(el => el.remove());
 
     bird.style.top = '40vh';
     img.style.display = 'block';
@@ -45,12 +57,15 @@ function startGame() {
 }
 
 /* ==========================================
-   BALANCED JUMP
+   PERFECT BALANCED JUMP
 ========================================== */
 function jump() {
-    if (game_state === 'Play') {
-        bird_dy = -4.5;   // Balanced jump height
-    }
+    if (game_state !== 'Play') return;
+
+    // Stop extreme falling momentum
+    if (bird_dy > 2) bird_dy = 2;
+
+    bird_dy = -jumpStrength;
 }
 
 /* ==========================================
@@ -77,22 +92,25 @@ document.addEventListener('touchstart', e => {
 ========================================== */
 function play() {
 
-    // Bigger vertical gap (easier)
-    let pipe_gap = window.innerWidth < 768 ? 48 : 42;
+    let pipe_gap =
+        window.innerWidth < 768
+            ? pipeGapMobile
+            : pipeGapDesktop;
 
     let pipe_separation = 0;
 
     function move() {
         if (game_state !== 'Play') return;
 
-        let pipe_sprite = document.querySelectorAll('.pipe_sprite');
+        let pipes = document.querySelectorAll('.pipe_sprite');
         let bird_props = bird.getBoundingClientRect();
 
-        /* Gravity progression */
+        /* ===== GRAVITY CONTROL ===== */
         gravityTimer += 1 / 60;
 
         let effectiveGravity =
-            initialGravity + gravityIncreaseRate * gravityTimer;
+            initialGravity +
+            gravityIncreaseRate * gravityTimer;
 
         if (parseInt(score_val.innerHTML) > 20)
             effectiveGravity = gravity;
@@ -103,7 +121,7 @@ function play() {
         bird_dy += effectiveGravity;
         bird.style.top = bird_props.top + bird_dy + 'px';
 
-        /* Top & bottom collision */
+        /* ===== TOP/BOTTOM COLLISION ===== */
         if (
             bird_props.top <= 0 ||
             bird_props.bottom >= window.innerHeight
@@ -112,15 +130,18 @@ function play() {
             return;
         }
 
-        /* Pipe movement */
-        pipe_sprite.forEach(element => {
-            let pipe_props = element.getBoundingClientRect();
+        /* ===== PIPE MOVEMENT ===== */
+        pipes.forEach(pipe => {
+
+            let pipe_props = pipe.getBoundingClientRect();
 
             if (pipe_props.right <= 0) {
-                element.remove();
+                pipe.remove();
+                return;
             }
 
-            else if (
+            /* Collision detection */
+            if (
                 bird_props.left < pipe_props.left + pipe_props.width &&
                 bird_props.left + bird_props.width > pipe_props.left &&
                 bird_props.top < pipe_props.top + pipe_props.height &&
@@ -130,16 +151,17 @@ function play() {
                 return;
             }
 
-            else if (
+            /* Score update */
+            if (
                 pipe_props.right < bird_props.left &&
-                element.increase_score === '1'
+                pipe.increase_score === '1'
             ) {
                 score_val.innerHTML =
                     parseInt(score_val.innerHTML) + 1;
-                element.increase_score = '0';
+                pipe.increase_score = '0';
             }
 
-            element.style.left =
+            pipe.style.left =
                 pipe_props.left - move_speed + 'px';
         });
 
@@ -147,30 +169,29 @@ function play() {
     }
 
     /* ==========================================
-       PIPE CREATION – VERY FAR APART
+       PIPE CREATION (FAR APART)
     ========================================== */
     function create_pipe() {
         if (game_state !== 'Play') return;
 
-        // THIS CONTROLS DISTANCE BETWEEN PIPES
-        // 350 = VERY FAR APART
-        if (pipe_separation > 350) {
+        if (pipe_separation > pipeDistance) {
 
             pipe_separation = 0;
 
-            // Controlled randomness (fair placement)
             let pipe_pos =
-                Math.floor(Math.random() * 25) + 25;
+                Math.floor(Math.random() * 25) + 30;
 
             let pipe_top = document.createElement('div');
             pipe_top.className = 'pipe_sprite';
             pipe_top.style.top = pipe_pos - 70 + 'vh';
+            pipe_top.style.left = '100vw';
             document.body.appendChild(pipe_top);
 
             let pipe_bottom = document.createElement('div');
             pipe_bottom.className = 'pipe_sprite';
             pipe_bottom.style.top =
                 pipe_pos + pipe_gap + 'vh';
+            pipe_bottom.style.left = '100vw';
             pipe_bottom.increase_score = '1';
             document.body.appendChild(pipe_bottom);
         }

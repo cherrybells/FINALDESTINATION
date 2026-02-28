@@ -1,16 +1,16 @@
 /* ==========================================
-   FLAPPY HIRONO GAME – FULL REVISED JS
-   Large Gap Version
+   FLAPPY HIRONO GAME – FULL JS
+   LARGE GAPS VERSION
 ========================================== */
 
-/* ===== CONFIG (Balanced Values) ===== */
+/* ===== CONFIG ===== */
 const CONFIG = {
     pipeSpeed: 200,          // moderate speed
     gravity: 850,            // natural fall
     jumpForce: 300,          // balanced jump
-    pipeGapDesktop: 220,     // large gap on desktop
-    pipeGapMobile: 250,      // large gap on mobile
-    pipeSpacingDesktop: 2.0, // spacing between pipes
+    pipeGapDesktop: 350,     // LARGE gap for desktop
+    pipeGapMobile: 400,      // LARGE gap for mobile
+    pipeSpacingDesktop: 2.0,
     pipeSpacingMobile: 1.7
 };
 
@@ -31,9 +31,7 @@ let score = 0;
 img.style.display = 'none';
 message.classList.add('messageStyle');
 
-/* ==========================================
-   START GAME
-========================================== */
+/* ===== START GAME ===== */
 function startGame() {
     if (game_state === 'Play') return;
 
@@ -56,19 +54,15 @@ function startGame() {
     requestAnimationFrame(gameLoop);
 }
 
-/* ==========================================
-   BALANCED JUMP
-========================================== */
+/* ===== JUMP ===== */
 function jump() {
     if (game_state !== 'Play') return;
 
-    if (velocity > 200) velocity = 200; // prevent stacking
+    if (velocity > 200) velocity = 200;
     velocity = -CONFIG.jumpForce;
 }
 
-/* ==========================================
-   CONTROLS
-========================================== */
+/* ===== CONTROLS ===== */
 document.addEventListener('keydown', e => {
     if (e.key === 'Enter') startGame();
     if (e.key === 'ArrowUp') jump();
@@ -85,9 +79,7 @@ document.addEventListener('touchstart', e => {
     else jump();
 }, { passive: false });
 
-/* ==========================================
-   MAIN LOOP (Time-Based)
-========================================== */
+/* ===== MAIN LOOP ===== */
 function gameLoop(timestamp) {
     if (game_state !== 'Play') return;
 
@@ -102,15 +94,11 @@ function gameLoop(timestamp) {
     requestAnimationFrame(gameLoop);
 }
 
-/* ==========================================
-   BIRD PHYSICS
-========================================== */
+/* ===== BIRD PHYSICS ===== */
 function updateBird(delta) {
     velocity += CONFIG.gravity * delta;
-
     const rect = bird.getBoundingClientRect();
     const newTop = rect.top + velocity * delta;
-
     bird.style.top = newTop + 'px';
 
     if (newTop <= 0 || rect.bottom >= window.innerHeight) {
@@ -118,9 +106,7 @@ function updateBird(delta) {
     }
 }
 
-/* ==========================================
-   PIPE MOVEMENT + COLLISION
-========================================== */
+/* ===== PIPE MOVEMENT + COLLISION ===== */
 function updatePipes(delta) {
     const pipes = document.querySelectorAll('.pipe_sprite');
     const birdRect = bird.getBoundingClientRect();
@@ -130,12 +116,8 @@ function updatePipes(delta) {
         const newLeft = rect.left - CONFIG.pipeSpeed * delta;
         pipe.style.left = newLeft + 'px';
 
-        // Remove pipes when off-screen
-        if (rect.right < 0) {
-            pipe.remove();
-        }
+        if (rect.right < 0) pipe.remove();
 
-        // Collision detection
         if (
             birdRect.left < rect.right &&
             birdRect.right > rect.left &&
@@ -145,7 +127,6 @@ function updatePipes(delta) {
             endGame();
         }
 
-        // Scoring: only bottom pipes increase score
         if (pipe.increase_score === '1' && rect.right < birdRect.left) {
             score++;
             score_val.innerHTML = score;
@@ -154,9 +135,7 @@ function updatePipes(delta) {
     });
 }
 
-/* ==========================================
-   PIPE CREATION – LARGE GAP
-========================================== */
+/* ===== PIPE CREATION – LARGE GAP ===== */
 function createPipes(delta) {
     pipeTimer += delta;
 
@@ -167,13 +146,13 @@ function createPipes(delta) {
     pipeTimer = 0;
 
     const gap = isMobile ? CONFIG.pipeGapMobile : CONFIG.pipeGapDesktop;
-    const minPipeHeight = 50;         
+    const minPipeHeight = 50;
     const maxPipeHeight = window.innerHeight - gap - minPipeHeight;
 
     const topHeight = Math.random() * (maxPipeHeight - minPipeHeight) + minPipeHeight;
     const bottomHeight = window.innerHeight - gap - topHeight;
 
-    // --- TOP PIPE ---
+    // TOP PIPE
     const topPipe = document.createElement('div');
     topPipe.className = 'pipe_sprite';
     topPipe.style.height = topHeight + 'px';
@@ -182,7 +161,7 @@ function createPipes(delta) {
     topPipe.increase_score = '0';
     document.body.appendChild(topPipe);
 
-    // --- BOTTOM PIPE ---
+    // BOTTOM PIPE
     const bottomPipe = document.createElement('div');
     bottomPipe.className = 'pipe_sprite';
     bottomPipe.style.height = bottomHeight + 'px';
@@ -192,15 +171,11 @@ function createPipes(delta) {
     document.body.appendChild(bottomPipe);
 }
 
-/* ==========================================
-   END GAME
-========================================== */
+/* ===== END GAME ===== */
 function endGame() {
     game_state = 'End';
     img.style.display = 'none';
-
     message.innerHTML =
         '<span style="color:red;">Game Over</span><br>Press Enter / Tap to Restart';
-
     message.classList.add('messageStyle');
 }

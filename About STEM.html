@@ -11,84 +11,125 @@
 <style>
 * {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 body {
-  font-family: Arial;
-  padding: 10px;
+  font-family: Arial, sans-serif;
   background-image: url("pictures/background.jpg");
   background-repeat: no-repeat;
   background-size: cover;
+  padding: 10px;
 }
 
-/* Style the top navigation bar */
+/* Top navigation bar */
 .topnav {
-  overflow: hidden;
+  display: flex;
+  flex-wrap: wrap;
   background-color: #0D1B3A;
 }
 
-/* Style the topnav links */
 .topnav a {
-  float: left;
-  display: block;
-  color: #f2f2f2;
+  flex: 1 1 auto;
   text-align: center;
   padding: 14px 16px;
   text-decoration: none;
+  color: #f2f2f2;
 }
 
-/* Change color on hover */
 .topnav a:hover {
   background-color: #ddd;
   color: black;
 }
 
-/* Create two unequal columns that floats next to each other */
-/* Left column */
-.leftcolumn {   
-  float: left;
+.topnav a:last-child {
+  order: 1; /* Moves "Games" to the right on large screens */
+}
+
+/* Container and cards */
+.row, .box-cont {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
   width: 100%;
 }
 
-/* Right column */
-.rightcolumn {
-  float: left;
-  width: 0%;
-  background-color: #f1f1f1;
-  padding-left: 20px;
-}
-
-/* Add a card effect for articles */
-.card {
+.card, .Cards {
   background: linear-gradient(#f0f8ff, #4169E1);
   padding: 20px;
-  margin-top: 20px;
+  border-radius: 10px;
+  text-align: center;
+  word-wrap: break-word;
+}
+
+/* Interest boxes */
+.wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.interestbox {
+  background-color: rgba(255, 255, 255, 0.8);
+  flex: 1 1 200px; /* Flexible width for mobile */
+  min-width: 180px;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+/* Subjects */
+.subjects {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.subjects span {
+  flex: 1 1 150px;
+  min-width: 120px;
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 8px;
+  border-radius: 6px;
+}
+
+/* Grid for boxes */
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+.grid > div {
+  flex: 1 1 300px;
+  min-width: 250px;
+  background-color: rgba(255,255,255,0.8);
+  padding: 15px;
   border-radius: 10px;
   text-align: center;
 }
 
-/* Clear floats after the columns */
-.row:after {
-  content: "";
-  display: table;
-  clear: both;
+/* Headers */
+h1 {
+  font-size: 1.5em;
+  margin-bottom: 10px;
 }
 
-/* Responsive layout - when the screen is less than 800px wide, make the two columns stack on top of each other instead of next to each other */
-
-@media screen and (max-width: 800px) {
-  .leftcolumn, .rightcolumn {   
-    width: 100%;
-    padding: 0;
-  }
+p {
+  font-size: 1em;
+  line-height: 1.4;
 }
 
-/* Responsive layout - when the screen is less than 400px wide, make the navigation links stack on top of each other instead of next to each other */
-
-@media screen and (max-width: 400px) {
+/* Responsive adjustments */
+@media screen and (max-width: 600px) {
   .topnav a {
-    float: none;
-    width: 100%;
+    flex: 1 1 100%;
+  }
+  .subjects span, .interestbox, .grid > div {
+    flex: 1 1 100%;
   }
 }
 </style>

@@ -49,7 +49,7 @@ function startGame() {
 ========================================== */
 function jump() {
     if (game_state === 'Play') {
-        bird_dy = -6;   // Balanced jump height
+        bird_dy = -4.5;   // Balanced jump height
     }
 }
 

@@ -386,17 +386,17 @@ video {
     }
 }
 
-/* Index: LCBAIANS text fitting inside box */
-#students {
-    font-size: 90px;           /* reduce slightly for desktop */
-    white-space: nowrap;        /* keep single line if desired */
-    overflow: hidden;
-    text-overflow: ellipsis;    /* optional: show … if still too long */
+/* Fit headings inside boxes */
+.boxes h1 {
+    font-size: 25px;           /* desktop size */
+    line-height: 1.1;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
 }
 
 @media screen and (max-width: 600px) {
-    #students {
-        font-size: 50px;       /* shrink on mobile */
-        letter-spacing: 5px;   /* reduce spacing */
+    .boxes h1 {
+        font-size: 18px;       /* smaller on mobile */
     }
 }

@@ -403,17 +403,3 @@ video {
     }
 }
 
-/* Ensure text stays fully inside its box */
-.boxes {
-    width: 100%;             /* make box use full available space */
-    padding: 10px 15px;      /* slightly reduce padding to give more room */
-    box-sizing: border-box;  /* include padding in width */
-}
-
-.boxes h1 {
-    font-size: 25px;         /* keep original font size */
-    white-space: normal;     /* allow wrapping */
-    word-break: break-word;  /* break long words if needed */
-    overflow: visible;       /* make sure nothing is hidden */
-}
-

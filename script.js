@@ -1,33 +1,32 @@
 /* ==========================================
-   CLASSROOM FLAPPY GAME – FINAL STABLE BUILD
+   FLAPPY GAME – FINAL BALANCED BUILD
+   Moderate speed • Moderate jump • Fair gap
 ========================================== */
 
-/* ===== GAME PHYSICS ===== */
-let move_speed = 2;        
-let gravity = 0.35;        
-let initialGravity = 0.05; 
-let gravityIncreaseRate = 0.004;
-let maxGravity = 0.35;
-
-/* Jump strength tuned to gravity */
-let jumpStrength = 5;
-
-/* Pipe distance control */
-let pipeDistance = 380;   // VERY far apart
-let pipeGapMobile = 50;
-let pipeGapDesktop = 44;
+/* ===== CONFIG (Balanced Values) ===== */
+const CONFIG = {
+    pipeSpeed: 200,          // moderate speed
+    gravity: 850,            // natural fall
+    jumpForce: 300,          // balanced jump
+    pipeGapDesktop: 170,     // fair gap
+    pipeGapMobile: 200,
+    pipeSpacingDesktop: 2.0, // fair distance
+    pipeSpacingMobile: 1.7
+};
 
 /* ===== ELEMENTS ===== */
-let bird = document.querySelector('.hironobird');
-let img = document.getElementById('bird');
-let score_val = document.querySelector('.score_val');
-let message = document.querySelector('.message');
-let score_title = document.querySelector('.score_title');
+const bird = document.querySelector('.hironobird');
+const img = document.getElementById('bird');
+const score_val = document.querySelector('.score_val');
+const message = document.querySelector('.message');
+const score_title = document.querySelector('.score_title');
 
-/* ===== GAME STATE ===== */
+/* ===== STATE ===== */
 let game_state = 'Start';
-let bird_dy = 0;
-let gravityTimer = 0;
+let velocity = 0;
+let lastTime = null;
+let pipeTimer = 0;
+let score = 0;
 
 img.style.display = 'none';
 message.classList.add('messageStyle');
@@ -39,13 +38,15 @@ function startGame() {
     if (game_state === 'Play') return;
 
     game_state = 'Play';
-    bird_dy = 0;
-    gravityTimer = 0;
+    velocity = 0;
+    lastTime = null;
+    pipeTimer = 0;
+    score = 0;
 
     document.querySelectorAll('.pipe_sprite')
-        .forEach(el => el.remove());
+        .forEach(p => p.remove());
 
-    bird.style.top = '40vh';
+    bird.style.top = '45vh';
     img.style.display = 'block';
 
     score_val.innerHTML = '0';
@@ -53,19 +54,19 @@ function startGame() {
     message.innerHTML = '';
     message.classList.remove('messageStyle');
 
-    play();
+    requestAnimationFrame(gameLoop);
 }
 
 /* ==========================================
-   PERFECT BALANCED JUMP
+   BALANCED JUMP
 ========================================== */
 function jump() {
     if (game_state !== 'Play') return;
 
-    // Stop extreme falling momentum
-    if (bird_dy > 2) bird_dy = 2;
+    // prevent extreme downward stacking
+    if (velocity > 200) velocity = 200;
 
-    bird_dy = -jumpStrength;
+    velocity = -CONFIG.jumpForce;
 }
 
 /* ==========================================
@@ -88,120 +89,121 @@ document.addEventListener('touchstart', e => {
 }, { passive: false });
 
 /* ==========================================
-   MAIN GAME LOOP
+   MAIN LOOP (Time-Based)
 ========================================== */
-function play() {
+function gameLoop(timestamp) {
 
-    let pipe_gap =
-        window.innerWidth < 768
-            ? pipeGapMobile
-            : pipeGapDesktop;
+    if (game_state !== 'Play') return;
 
-    let pipe_separation = 0;
+    if (!lastTime) lastTime = timestamp;
 
-    function move() {
-        if (game_state !== 'Play') return;
+    const delta = (timestamp - lastTime) / 1000;
+    lastTime = timestamp;
 
-        let pipes = document.querySelectorAll('.pipe_sprite');
-        let bird_props = bird.getBoundingClientRect();
+    updateBird(delta);
+    updatePipes(delta);
+    createPipes(delta);
 
-        /* ===== GRAVITY CONTROL ===== */
-        gravityTimer += 1 / 60;
+    requestAnimationFrame(gameLoop);
+}
 
-        let effectiveGravity =
-            initialGravity +
-            gravityIncreaseRate * gravityTimer;
+/* ==========================================
+   BIRD PHYSICS
+========================================== */
+function updateBird(delta) {
 
-        if (parseInt(score_val.innerHTML) > 20)
-            effectiveGravity = gravity;
+    velocity += CONFIG.gravity * delta;
 
-        if (effectiveGravity > maxGravity)
-            effectiveGravity = maxGravity;
+    const rect = bird.getBoundingClientRect();
+    const newTop = rect.top + velocity * delta;
 
-        bird_dy += effectiveGravity;
-        bird.style.top = bird_props.top + bird_dy + 'px';
+    bird.style.top = newTop + 'px';
 
-        /* ===== TOP/BOTTOM COLLISION ===== */
+    if (newTop <= 0 || rect.bottom >= window.innerHeight) {
+        endGame();
+    }
+}
+
+/* ==========================================
+   PIPE MOVEMENT + COLLISION
+========================================== */
+function updatePipes(delta) {
+
+    const pipes = document.querySelectorAll('.pipe_sprite');
+    const birdRect = bird.getBoundingClientRect();
+
+    pipes.forEach(pipe => {
+
+        const rect = pipe.getBoundingClientRect();
+        const newLeft = rect.left - CONFIG.pipeSpeed * delta;
+
+        pipe.style.left = newLeft + 'px';
+
+        if (rect.right < 0) {
+            pipe.remove();
+        }
+
+        // collision
         if (
-            bird_props.top <= 0 ||
-            bird_props.bottom >= window.innerHeight
+            birdRect.left < rect.right &&
+            birdRect.right > rect.left &&
+            birdRect.top < rect.bottom &&
+            birdRect.bottom > rect.top
         ) {
             endGame();
-            return;
         }
 
-        /* ===== PIPE MOVEMENT ===== */
-        pipes.forEach(pipe => {
-
-            let pipe_props = pipe.getBoundingClientRect();
-
-            if (pipe_props.right <= 0) {
-                pipe.remove();
-                return;
-            }
-
-            /* Collision detection */
-            if (
-                bird_props.left < pipe_props.left + pipe_props.width &&
-                bird_props.left + bird_props.width > pipe_props.left &&
-                bird_props.top < pipe_props.top + pipe_props.height &&
-                bird_props.bottom > pipe_props.top
-            ) {
-                endGame();
-                return;
-            }
-
-            /* Score update */
-            if (
-                pipe_props.right < bird_props.left &&
-                pipe.increase_score === '1'
-            ) {
-                score_val.innerHTML =
-                    parseInt(score_val.innerHTML) + 1;
-                pipe.increase_score = '0';
-            }
-
-            pipe.style.left =
-                pipe_props.left - move_speed + 'px';
-        });
-
-        requestAnimationFrame(move);
-    }
-
-    /* ==========================================
-       PIPE CREATION (FAR APART)
-    ========================================== */
-    function create_pipe() {
-        if (game_state !== 'Play') return;
-
-        if (pipe_separation > pipeDistance) {
-
-            pipe_separation = 0;
-
-            let pipe_pos =
-                Math.floor(Math.random() * 25) + 30;
-
-            let pipe_top = document.createElement('div');
-            pipe_top.className = 'pipe_sprite';
-            pipe_top.style.top = pipe_pos - 70 + 'vh';
-            pipe_top.style.left = '100vw';
-            document.body.appendChild(pipe_top);
-
-            let pipe_bottom = document.createElement('div');
-            pipe_bottom.className = 'pipe_sprite';
-            pipe_bottom.style.top =
-                pipe_pos + pipe_gap + 'vh';
-            pipe_bottom.style.left = '100vw';
-            pipe_bottom.increase_score = '1';
-            document.body.appendChild(pipe_bottom);
+        // scoring
+        if (
+            pipe.increase_score === '1' &&
+            rect.right < birdRect.left
+        ) {
+            score++;
+            score_val.innerHTML = score;
+            pipe.increase_score = '0';
         }
+    });
+}
 
-        pipe_separation++;
-        requestAnimationFrame(create_pipe);
-    }
+/* ==========================================
+   PIPE CREATION
+========================================== */
+function createPipes(delta) {
 
-    requestAnimationFrame(move);
-    requestAnimationFrame(create_pipe);
+    pipeTimer += delta;
+
+    const isMobile = window.innerWidth < 768;
+
+    const spacing = isMobile
+        ? CONFIG.pipeSpacingMobile
+        : CONFIG.pipeSpacingDesktop;
+
+    if (pipeTimer < spacing) return;
+
+    pipeTimer = 0;
+
+    const gap = isMobile
+        ? CONFIG.pipeGapMobile
+        : CONFIG.pipeGapDesktop;
+
+    const minHeight = 80;
+    const maxHeight = window.innerHeight - gap - 80;
+
+    const topHeight =
+        Math.random() * (maxHeight - minHeight) + minHeight;
+
+    const topPipe = document.createElement('div');
+    topPipe.className = 'pipe_sprite';
+    topPipe.style.height = topHeight + 'px';
+    topPipe.style.left = '100vw';
+    document.body.appendChild(topPipe);
+
+    const bottomPipe = document.createElement('div');
+    bottomPipe.className = 'pipe_sprite';
+    bottomPipe.style.top = topHeight + gap + 'px';
+    bottomPipe.style.left = '100vw';
+    bottomPipe.increase_score = '1';
+    document.body.appendChild(bottomPipe);
 }
 
 /* ==========================================
@@ -212,7 +214,7 @@ function endGame() {
     img.style.display = 'none';
 
     message.innerHTML =
-        '<span style="color:red;">Game Over</span><br>Press Enter / Click / Tap to Restart';
+        '<span style="color:red;">Game Over</span><br>Press Enter / Tap to Restart';
 
     message.classList.add('messageStyle');
 }

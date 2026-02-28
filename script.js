@@ -8,7 +8,7 @@ const CONFIG = {
     pipeSpeed: 200,          // moderate speed
     gravity: 850,            // natural fall
     jumpForce: 300,          // balanced jump
-    pipeGapDesktop: 450,     // LARGE gap for desktop
+    pipeGapDesktop: 400,     // LARGE gap for desktop
     pipeGapMobile: 350,      // LARGE gap for mobile
     pipeSpacingDesktop: 2.0,
     pipeSpacingMobile: 1.7

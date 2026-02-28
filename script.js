@@ -1,6 +1,5 @@
 /* ==========================================
-   FLAPPY GAME – FINAL BALANCED BUILD
-   Moderate speed • Moderate jump • Fair gap
+   FLAPPY HIRONO GAME – FULL REVISED JS
 ========================================== */
 
 /* ===== CONFIG (Balanced Values) ===== */
@@ -43,8 +42,7 @@ function startGame() {
     pipeTimer = 0;
     score = 0;
 
-    document.querySelectorAll('.pipe_sprite')
-        .forEach(p => p.remove());
+    document.querySelectorAll('.pipe_sprite').forEach(p => p.remove());
 
     bird.style.top = '45vh';
     img.style.display = 'block';
@@ -63,9 +61,7 @@ function startGame() {
 function jump() {
     if (game_state !== 'Play') return;
 
-    // prevent extreme downward stacking
-    if (velocity > 200) velocity = 200;
-
+    if (velocity > 200) velocity = 200; // prevent stacking
     velocity = -CONFIG.jumpForce;
 }
 
@@ -92,11 +88,9 @@ document.addEventListener('touchstart', e => {
    MAIN LOOP (Time-Based)
 ========================================== */
 function gameLoop(timestamp) {
-
     if (game_state !== 'Play') return;
 
     if (!lastTime) lastTime = timestamp;
-
     const delta = (timestamp - lastTime) / 1000;
     lastTime = timestamp;
 
@@ -111,7 +105,6 @@ function gameLoop(timestamp) {
    BIRD PHYSICS
 ========================================== */
 function updateBird(delta) {
-
     velocity += CONFIG.gravity * delta;
 
     const rect = bird.getBoundingClientRect();
@@ -128,22 +121,20 @@ function updateBird(delta) {
    PIPE MOVEMENT + COLLISION
 ========================================== */
 function updatePipes(delta) {
-
     const pipes = document.querySelectorAll('.pipe_sprite');
     const birdRect = bird.getBoundingClientRect();
 
     pipes.forEach(pipe => {
-
         const rect = pipe.getBoundingClientRect();
         const newLeft = rect.left - CONFIG.pipeSpeed * delta;
-
         pipe.style.left = newLeft + 'px';
 
+        // Remove pipes when off-screen
         if (rect.right < 0) {
             pipe.remove();
         }
 
-        // collision
+        // Collision detection
         if (
             birdRect.left < rect.right &&
             birdRect.right > rect.left &&
@@ -153,11 +144,8 @@ function updatePipes(delta) {
             endGame();
         }
 
-        // scoring
-        if (
-            pipe.increase_score === '1' &&
-            rect.right < birdRect.left
-        ) {
+        // Scoring: only bottom pipes increase score
+        if (pipe.increase_score === '1' && rect.right < birdRect.left) {
             score++;
             score_val.innerHTML = score;
             pipe.increase_score = '0';
@@ -169,41 +157,36 @@ function updatePipes(delta) {
    PIPE CREATION
 ========================================== */
 function createPipes(delta) {
-
     pipeTimer += delta;
 
     const isMobile = window.innerWidth < 768;
-
-    const spacing = isMobile
-        ? CONFIG.pipeSpacingMobile
-        : CONFIG.pipeSpacingDesktop;
+    const spacing = isMobile ? CONFIG.pipeSpacingMobile : CONFIG.pipeSpacingDesktop;
 
     if (pipeTimer < spacing) return;
-
     pipeTimer = 0;
 
-    const gap = isMobile
-        ? CONFIG.pipeGapMobile
-        : CONFIG.pipeGapDesktop;
+    const gap = isMobile ? CONFIG.pipeGapMobile : CONFIG.pipeGapDesktop;
+    const minHeight = 50;
+    const maxHeight = window.innerHeight - gap - minHeight;
+    const topHeight = Math.random() * (maxHeight - minHeight) + minHeight;
 
-    const minHeight = 80;
-    const maxHeight = window.innerHeight - gap - 80;
-
-    const topHeight =
-        Math.random() * (maxHeight - minHeight) + minHeight;
-
+    // --- TOP PIPE ---
     const topPipe = document.createElement('div');
     topPipe.className = 'pipe_sprite';
     topPipe.style.height = topHeight + 'px';
+    topPipe.style.top = '0px';
     topPipe.style.left = '100vw';
-    topPipe.style.top = '0px';  
+    topPipe.increase_score = '0'; // top pipe doesn't count
     document.body.appendChild(topPipe);
 
+    // --- BOTTOM PIPE ---
+    const bottomHeight = window.innerHeight - topHeight - gap;
     const bottomPipe = document.createElement('div');
     bottomPipe.className = 'pipe_sprite';
+    bottomPipe.style.height = bottomHeight + 'px';
     bottomPipe.style.top = topHeight + gap + 'px';
     bottomPipe.style.left = '100vw';
-    bottomPipe.increase_score = '1';
+    bottomPipe.increase_score = '1'; // bottom pipe counts
     document.body.appendChild(bottomPipe);
 }
 

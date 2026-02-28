@@ -37,7 +37,7 @@ function startGame() {
 
 function jump() {
     if (game_state === 'Play') {
-        bird_dy = -4.0; // reduced jump for easier control
+        bird_dy = 1.0; // reduced jump for easier control
     }
 }
 

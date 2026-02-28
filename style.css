@@ -409,23 +409,3 @@ video {
     margin: 0;
 }
 
-/* For subjects span (like Philosophy, Institutions) */
-.subjects span {
-    white-space: normal;        /* allow wrapping to multiple lines */
-    font-size: clamp(12px, 3vw, 14px); /* scale for mobile */
-}
-
-@media screen and (max-width: 600px) {
-    .video-grid {
-        grid-template-columns: 1fr;       /* single column */
-        grid-auto-rows: 1fr;             /* make squares */
-        gap: 10px;
-    }
-    .video-box {
-        height: 0;
-        padding-bottom: 100%;             /* maintain square aspect ratio */
-    }
-    video {
-        object-fit: cover;               /* fill the square */
-    }
-}

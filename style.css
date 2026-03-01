@@ -291,6 +291,11 @@ font-size: 20px;
 text-align: justify;
 }
 
+.letters{
+    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-size: 20px;
+    text-align: justify;
+}
 /*IMAGE GALLERY*/
 div.scroll-container {
   background: linear-gradient(to right, #e3f2fd, #90caf9);;
